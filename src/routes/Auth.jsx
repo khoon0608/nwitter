@@ -24,22 +24,24 @@ const Auth = () => {
     event.preventDefault();
 
     try {
-      let data = null;
       if (newAccount === true) {
-        data = await createUserWithEmailAndPassword(
+        await createUserWithEmailAndPassword(
           authService,
           email,
           password
         );
         // create account
       } else {
-        data = await signInWithEmailAndPassword(authService, email, password);
+        await signInWithEmailAndPassword(authService, email, password);
         // log in
       }
     } catch (error) {
       alert(error.message);
     }
   };
+
+  const toggleAccount = () => setNewAccount((prev) => !prev);
+
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -59,8 +61,11 @@ const Auth = () => {
           value={password}
           onChange={onChange}
         />
-        <button> {newAccount ? "create Account" : "Log In"} </button>
+        <button> {newAccount ? "Create Account" : "Sign In"} </button>
       </form>
+      <span onClick={toggleAccount}>
+        {newAccount ? "Sign In" : "Create Account"}
+      </span>
       <div>
         <button>Continue with Google</button>
         <button>Continue with Github</button>

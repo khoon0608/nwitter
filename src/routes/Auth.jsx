@@ -1,16 +1,17 @@
 /** @format */
 
 import React, { useState } from "react";
+import { authService } from "fBase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { authService } from "fBase";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newAccount, setNewAccount] = useState(true);
+
   const onChange = (event) => {
     const {
       target: { name, value },
@@ -19,28 +20,24 @@ const Auth = () => {
     if (name === "email") setEmail(value);
     else if (name === "password") setPassword(value);
   };
-  const onSubmit = async(event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
-    try{
+
+    try {
       let data = null;
-      if (newAccount) {
-         data = await createUserWithEmailAndPassword(
+      if (newAccount === true) {
+        data = await createUserWithEmailAndPassword(
           authService,
           email,
           password
-        )
+        );
         // create account
       } else {
-         data = await signInWithEmailAndPassword(
-          authService,
-          email,
-          password
-        )
+        data = await signInWithEmailAndPassword(authService, email, password);
         // log in
       }
-      console.log(data);
-    } catch(error) {
-      console.log(error);
+    } catch (error) {
+      alert(error.message);
     }
   };
   return (
@@ -62,7 +59,7 @@ const Auth = () => {
           value={password}
           onChange={onChange}
         />
-        <button> {newAccount ? "Create Account" : "Log In"} </button>
+        <button> {newAccount ? "create Account" : "Log In"} </button>
       </form>
       <div>
         <button>Continue with Google</button>

@@ -52,16 +52,7 @@ const Home = ({ userObj }) => {
 
   const submitHandle = async (event) => {
     event.preventDefault();
-    // try {
-    //   await addDoc(collection(dbService, "nweets"), {
-    //     text: nweet,
-    //     creatorId: userObj.uid,
-    //     createdAt: serverTimestamp(),
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    // setNweet("");
+    
     let attachmentUrl = "";
     if (attachment) {
       const storageRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);

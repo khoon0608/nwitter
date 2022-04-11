@@ -1,10 +1,15 @@
 /** @format */
 
-import { dbService } from "fBase";
+import { dbService, storageService } from "fBase";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import React, { useState } from "react";
 
-const Nweet = ({ nweetObj: { id, text, createdAt, creatorId, attachmentUrl }, isOwner }) => {
+const Nweet = ({
+  
+  nweetObj: { id, text, createdAt, creatorId, attachmentUrl },
+  isOwner,
+}) => {
   const [editing, setEditing] = useState(false);
   const [newNweet, setNewNweet] = useState(text);
 
@@ -15,6 +20,7 @@ const Nweet = ({ nweetObj: { id, text, createdAt, creatorId, attachmentUrl }, is
 
     if (ok) {
       await deleteDoc(NweetTextRef);
+      attachmentUrl && (await deleteObject(ref(storageService, attachmentUrl)));
     }
   };
 
@@ -32,6 +38,14 @@ const Nweet = ({ nweetObj: { id, text, createdAt, creatorId, attachmentUrl }, is
       text: newNweet,
     });
     setEditing(false);
+  };
+
+  const deleteAttachment = async (event) => {
+    event.preventDefault();
+    await updateDoc(NweetTextRef, {
+      attachmentUrl: "",
+    });
+    await deleteObject(ref(storageService, attachmentUrl));
   };
 
   const toggleEditing = () => setEditing((prev) => !prev);
@@ -56,7 +70,19 @@ const Nweet = ({ nweetObj: { id, text, createdAt, creatorId, attachmentUrl }, is
       ) : (
         <>
           <h4>{text}</h4>
-          <img src={attachmentUrl} alt="nweet-img" height='50px' width='50px' />
+          {attachmentUrl && (
+            <>
+              <img
+                src={attachmentUrl}
+                alt='nweet-img'
+                height='50px'
+                width='50px'
+                style={{ borderRadius: "50%" }}
+              />
+              <button onClick={deleteAttachment}>Delete Image</button>
+            </>
+          )}
+
           {isOwner && (
             <>
               <button onClick={deleteHandle}>Del</button>
